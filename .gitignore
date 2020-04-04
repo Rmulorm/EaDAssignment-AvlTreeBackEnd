@@ -44,6 +44,12 @@ jspm_packages/
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
+# Output of 'tsc'
+dist/*
+
+# Output of 'npm pack'
+*.tgz
+
 # TypeScript cache
 *.tsbuildinfo
 
@@ -61,13 +67,6 @@ web_modules/
 
 # Optional REPL history
 .node_repl_history
-
-# Output of 'tsc'
-dist/*
-
-
-# Output of 'npm pack'
-*.tgz
 
 # Yarn Integrity file
 .yarn-integrity
