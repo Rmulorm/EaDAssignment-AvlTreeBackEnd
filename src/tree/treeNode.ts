@@ -1,3 +1,5 @@
+import ReactD3TreeItem from "../types/ReactD3TreeItem";
+
 class TreeNode {
   private value: number;
   private leftChildren: TreeNode | null;
@@ -53,6 +55,27 @@ class TreeNode {
       return `(${this.rightChildren.print()})`
     }
     return '';
+  }
+
+  public getTree(): ReactD3TreeItem {
+    const tree: ReactD3TreeItem = {
+      name: String(this.value),
+      children: this.getChildrenTrees()
+    }
+
+    return tree;
+  }
+
+  private getChildrenTrees(): ReactD3TreeItem[] | undefined {
+    const childrenTrees: ReactD3TreeItem[] = new Array<ReactD3TreeItem>();
+
+    if (this.leftChildren)
+      childrenTrees.push(this.leftChildren.getTree());
+    if (this.rightChildren)
+      childrenTrees.push(this.rightChildren.getTree());
+
+    if (childrenTrees.length >= 1)
+      return childrenTrees;
   }
 };
 
