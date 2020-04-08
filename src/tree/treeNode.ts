@@ -1,5 +1,5 @@
 import ReactD3TreeItem, { NodeSvgShape } from "../types/ReactD3TreeItem";
-import SearchNodeReturn from "../types/searchNodeReturn";
+import SearchNodeReturn from "../types/SearchNodeReturn";
 
 class TreeNode {
   private value: number;
