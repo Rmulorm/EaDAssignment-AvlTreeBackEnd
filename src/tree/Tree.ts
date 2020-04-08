@@ -8,27 +8,12 @@ class Tree {
     this.root = null;
   }
 
-  public isTreeEmpty() {
-    return !!this.root;
-  }
-
   public addNode(value: number) {
     if (!this.root) {
       this.root = new TreeNode(value);
     } else {
       this.root.addNode(value);
     }
-  }
-
-  public print() {
-    return(new Promise((resolve, reject) => {
-      if (!this.root){
-        reject("Empty Tree");
-        return;
-      }
-
-      resolve(this.root.print());
-    }));
   }
 
   public getTree() {

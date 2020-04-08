@@ -2,11 +2,15 @@ import ReactD3TreeItem from "../types/ReactD3TreeItem";
 
 class TreeNode {
   private value: number;
+  private treeHeight: number;
+  private balanceFactor: number;
   private leftChildren: TreeNode | null;
   private rightChildren: TreeNode | null;
 
   public constructor(value: number) {
     this.value = value;
+    this.treeHeight = 1;
+    this.balanceFactor = 0;
 
     this.leftChildren = null;
     this.rightChildren = null;
@@ -22,6 +26,9 @@ class TreeNode {
     } else {
       this.toToTheRight(value);
     }
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
   }
 
   private addToTheLeft(value: number) {
@@ -32,7 +39,7 @@ class TreeNode {
       this.leftChildren.addNode(value);
     }
   }
-
+    
   private toToTheRight(value: number) {
     if (this.rightChildren === null) {
       this.rightChildren = new TreeNode(value);
@@ -42,24 +49,38 @@ class TreeNode {
     }
   }
 
-  public print(): String {
-    return `${this.value}${this.printChildren()}`;
+  private updateTreeHeight() {
+    const leftTreeHeight = this.getChildrenTreeHeight(this.leftChildren);
+    const rightTreeHeight = this.getChildrenTreeHeight(this.rightChildren);
+
+    if (leftTreeHeight > rightTreeHeight) {
+      this.treeHeight = leftTreeHeight + 1;
+    } else {
+      this.treeHeight = rightTreeHeight + 1;
+    }
   }
 
-  private printChildren(): String {
-    if (this.leftChildren !== null && this.rightChildren !== null) {
-      return `(${this.leftChildren.print()}, ${this.rightChildren.print()})`;
-    } else if (this.leftChildren !== null) {
-      return `(${this.leftChildren.print()})`;
-    } else if (this.rightChildren !== null) {
-      return `(${this.rightChildren.print()})`
-    }
-    return '';
+  private updateBalanceFactor() {
+    const leftTreeHeight = this.getChildrenTreeHeight(this.leftChildren);
+    const rightTreeHeight = this.getChildrenTreeHeight(this.rightChildren);
+
+    this.balanceFactor = leftTreeHeight - rightTreeHeight;
+  }
+
+  private getChildrenTreeHeight(children: TreeNode | null) {
+    if (children)
+      return children.treeHeight;
+
+    return 0;
   }
 
   public getTree(): ReactD3TreeItem {
     const tree: ReactD3TreeItem = {
       name: String(this.value),
+      attributes: {
+        height: String(this.treeHeight),
+        balanceFactor: String(this.balanceFactor)
+      },
       children: this.getChildrenTrees()
     }
 

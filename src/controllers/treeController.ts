@@ -3,11 +3,6 @@ import { Request, Response } from 'express';
 import Tree from '../tree/Tree';
 import ReactD3TreeItem from '../types/ReactD3TreeItem';
 
-interface createType {
-  Index: any;
-  value: number | number[]
-}
-
 const tree = new Tree();
 
 export default {
@@ -16,21 +11,21 @@ export default {
       .then((d3tree) => {
         response.json(d3tree);
       })
-      .catch((error) => {
+      .catch(() => {
         response.status(204).send();
       })
   },
+
   search(request: Request, response: Response) {
 
   },
+
   create(request: Request, response: Response) {
-    const nodeValue = request.body.value;
-    tree.addNode(nodeValue);
+    tree.addNode(request.body.value);
 
-    console.log(tree.print());
-
-    return response.json(tree.print());
+    response.status(204).send();
   },
+
   delete(request: Request, response: Response) {
 
   },
