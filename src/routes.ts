@@ -10,6 +10,6 @@ routes.get('/', (request: Request, response: Response) => {
 routes.get('/tree', treeController.index);
 routes.get('/tree/:number', treeController.search);
 routes.post('/tree', treeController.create);
-routes.delete('/tree/:id', treeController.delete);
+routes.delete('/tree/:number', treeController.delete);
 
 export default routes;

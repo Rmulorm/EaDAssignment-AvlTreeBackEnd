@@ -1,19 +1,31 @@
-import ReactD3TreeItem from "../types/ReactD3TreeItem";
+import ReactD3TreeItem, { NodeSvgShape } from "../types/ReactD3TreeItem";
+import SearchNodeReturn from "../types/searchNodeReturn";
 
 class TreeNode {
   private value: number;
+
   private treeHeight: number;
   private balanceFactor: number;
+
   private leftChildren: TreeNode | null;
   private rightChildren: TreeNode | null;
 
   public constructor(value: number) {
     this.value = value;
+
     this.treeHeight = 1;
     this.balanceFactor = 0;
 
     this.leftChildren = null;
     this.rightChildren = null;
+  }
+
+  public getValue(): number {
+    return this.value;
+  }
+
+  public getTreeHeight(): number {
+    return this.treeHeight;
   }
 
   public addNode(value: number) {
@@ -69,35 +81,75 @@ class TreeNode {
 
   private getChildrenTreeHeight(children: TreeNode | null) {
     if (children)
-      return children.treeHeight;
+      return children.getTreeHeight();
 
     return 0;
   }
 
-  public getTree(): ReactD3TreeItem {
+  public searchNode(requiredValue: number, searchedNodes: number[]): SearchNodeReturn {
+    searchedNodes.push(this.value);
+
+    if (this.value === requiredValue){
+      return <SearchNodeReturn>{
+        isNodeInTheTree: true,
+        searchedNodes: searchedNodes
+      }
+    }
+
+    if ((requiredValue < this.value) && this.leftChildren) {
+      return this.leftChildren.searchNode(requiredValue, searchedNodes);
+    } else if ((requiredValue > this.value) && this.rightChildren) {
+      return this.rightChildren.searchNode(requiredValue, searchedNodes);
+    }
+
+    return <SearchNodeReturn>{
+      isNodeInTheTree: false,
+      searchedNodes: searchedNodes
+    }
+  }
+
+  public getTree(searchNodes: SearchNodeReturn | undefined): ReactD3TreeItem {
+    const nodeShapeProps = this.getNodeShapeProps(searchNodes);
+
     const tree: ReactD3TreeItem = {
       name: String(this.value),
+      nodeSvgShape: nodeShapeProps,
       attributes: {
         height: String(this.treeHeight),
         balanceFactor: String(this.balanceFactor)
       },
-      children: this.getChildrenTrees()
+      children: this.getChildrenTrees(searchNodes)
     }
 
     return tree;
   }
 
-  private getChildrenTrees(): ReactD3TreeItem[] | undefined {
-    const childrenTrees: ReactD3TreeItem[] = new Array<ReactD3TreeItem>();
-
-    if (this.leftChildren)
-      childrenTrees.push(this.leftChildren.getTree());
-    if (this.rightChildren)
-      childrenTrees.push(this.rightChildren.getTree());
-
-    if (childrenTrees.length >= 1)
-      return childrenTrees;
+  private getNodeShapeProps(searchNodes: SearchNodeReturn | undefined): NodeSvgShape | undefined {
+    if (searchNodes) {
+      if (searchNodes.searchedNodes.includes(this.value)) {
+        return <NodeSvgShape>{
+          shapeProps: {
+            r: 10,
+            fill: (searchNodes.isNodeInTheTree) ? 'green' : 'red',
+            stroke: (searchNodes.isNodeInTheTree) ? 'green' : 'red'
+          }
+        };
+      }
+    }
   }
+
+  private getChildrenTrees(searchNodes: SearchNodeReturn | undefined): ReactD3TreeItem[] | undefined {
+    const childrenTrees: ReactD3TreeItem[] = new Array<ReactD3TreeItem>();
+    
+    if (this.leftChildren)
+    childrenTrees.push(this.leftChildren.getTree(searchNodes));
+    if (this.rightChildren)
+    childrenTrees.push(this.rightChildren.getTree(searchNodes));
+    
+    if (childrenTrees.length >= 1)
+    return childrenTrees;
+  }
+
 };
 
 export default TreeNode;

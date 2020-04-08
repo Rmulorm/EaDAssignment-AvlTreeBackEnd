@@ -1,5 +1,6 @@
 import TreeNode from "./TreeNode";
 import ReactD3TreeItem from "../types/ReactD3TreeItem";
+import SearchNodeReturn from "../types/searchNodeReturn";
 
 class Tree {
   private root: TreeNode | null;
@@ -16,14 +17,27 @@ class Tree {
     }
   }
 
-  public getTree() {
+  public searchNode(value: number) {
+    return(new Promise<SearchNodeReturn>((resolve, reject) => {
+      if (!this.root) {
+        reject(new Error("Empty Tree"));
+        return;
+      }
+  
+      const searchTree = this.root.searchNode(value, new Array<number>());
+      resolve(searchTree);
+    }))
+    
+  }
+
+  public getTree(searchNodes: SearchNodeReturn | undefined) {
     return(new Promise<ReactD3TreeItem>((resolve, reject) => {
       if (!this.root) {
         reject(new Error("Empty Tree"));
         return;
       }
 
-      resolve(this.root.getTree());
+      resolve(this.root.getTree(searchNodes));
     }));
   }
 }
