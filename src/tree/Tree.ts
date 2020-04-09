@@ -10,11 +10,10 @@ class Tree {
   }
 
   public addNode(value: number) {
-    if (!this.root) {
+    if (!this.root)
       this.root = new TreeNode(value);
-    } else {
-      this.root.insert(value);
-    }
+    else
+      this.root = this.root.insert(value);
   }
 
   public searchNode(value: number) {
