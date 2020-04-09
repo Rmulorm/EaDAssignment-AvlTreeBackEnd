@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import Tree from '../tree/Tree';
 import ReactD3TreeItem from '../types/ReactD3TreeItem';
-import SearchNodeReturn from '../types/searchNodeReturn';
+import SearchNodeReturn from '../types/SearchNodeReturn';
 
 const tree = new Tree();
 

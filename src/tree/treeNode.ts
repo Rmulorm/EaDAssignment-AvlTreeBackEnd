@@ -32,6 +32,20 @@ class TreeNode {
     return this.balanceFactor;
   }
 
+  public setRightChildren(node: TreeNode | null) {
+    this.rightChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+  }
+
+  public setLeftChildren(node: TreeNode | null) {
+    this.leftChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+  }
+
   public insert(value: number): TreeNode {
     if (value === this.value) {
       throw new Error("This value is already in the Tree");
@@ -77,15 +91,15 @@ class TreeNode {
     if (!this.leftChildren)
       throw new Error("Invalid rotation to the Right: There's no left children");
 
-    if (this.leftChildren.getBalanceFactor() > 0)
-      return this.leftChildren.setRightChildren(this);
-    else 
-      return this.leftChildren.rotateToTheLeft();
+    if (this.leftChildren.getBalanceFactor() < 0)
+      this.leftChildren = this.leftChildren.rotateToTheLeft();
+
+    return this.leftChildren.updateRightChildren(this);
   }
 
-  public setRightChildren(node: TreeNode | null): TreeNode {
+  public updateRightChildren(node: TreeNode | null): TreeNode {
     node?.setLeftChildren(this.rightChildren);
-    this.rightChildren = node;
+    this.setRightChildren(node);
 
     return this;
   }
@@ -95,14 +109,14 @@ class TreeNode {
       throw new Error("Invalid rotation to the Right: There's no left children");
 
     if (this.rightChildren.getBalanceFactor() > 0)
-      return this.rightChildren.setLeftChildren(this);
-    else 
-      return this.rightChildren.rotateToTheRight();
+      this.rightChildren = this.rightChildren.rotateToTheRight();
+
+    return this.rightChildren.updateLeftChildren(this);
   }
 
-  public setLeftChildren(node: TreeNode | null): TreeNode {
+  public updateLeftChildren(node: TreeNode | null): TreeNode {
     node?.setRightChildren(this.leftChildren);
-    this.leftChildren = node;
+    this.setLeftChildren(node);
 
     return this;
   }
