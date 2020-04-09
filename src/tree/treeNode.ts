@@ -65,11 +65,7 @@ class TreeNode {
     const leftTreeHeight = this.getChildrenTreeHeight(this.leftChildren);
     const rightTreeHeight = this.getChildrenTreeHeight(this.rightChildren);
 
-    if (leftTreeHeight > rightTreeHeight) {
-      this.treeHeight = leftTreeHeight + 1;
-    } else {
-      this.treeHeight = rightTreeHeight + 1;
-    }
+    this.treeHeight = Math.max(leftTreeHeight, rightTreeHeight) + 1;
   }
 
   private updateBalanceFactor() {
@@ -111,7 +107,7 @@ class TreeNode {
   public getTree(searchNodes: SearchNodeReturn | undefined): ReactD3TreeItem {
     const nodeShapeProps = this.getNodeShapeProps(searchNodes);
 
-    const tree: ReactD3TreeItem = {
+    return <ReactD3TreeItem>{
       name: String(this.value),
       nodeSvgShape: nodeShapeProps,
       attributes: {
@@ -119,35 +115,31 @@ class TreeNode {
         balanceFactor: String(this.balanceFactor)
       },
       children: this.getChildrenTrees(searchNodes)
-    }
-
-    return tree;
+    };
   }
 
   private getNodeShapeProps(searchNodes: SearchNodeReturn | undefined): NodeSvgShape | undefined {
-    if (searchNodes) {
-      if (searchNodes.searchedNodes.includes(this.value)) {
-        return <NodeSvgShape>{
-          shapeProps: {
-            r: 10,
-            fill: (searchNodes.isNodeInTheTree) ? 'green' : 'red',
-            stroke: (searchNodes.isNodeInTheTree) ? 'green' : 'red'
-          }
-        };
-      }
+    if (searchNodes && searchNodes.searchedNodes.includes(this.value)) {
+      return <NodeSvgShape>{
+        shapeProps: {
+          r: 10,
+          fill: (searchNodes.isNodeInTheTree) ? 'green' : 'red',
+          stroke: (searchNodes.isNodeInTheTree) ? 'green' : 'red'
+        }
+      };
     }
   }
 
   private getChildrenTrees(searchNodes: SearchNodeReturn | undefined): ReactD3TreeItem[] | undefined {
     const childrenTrees: ReactD3TreeItem[] = new Array<ReactD3TreeItem>();
-    
+
     if (this.leftChildren)
-    childrenTrees.push(this.leftChildren.getTree(searchNodes));
+      childrenTrees.push(this.leftChildren.getTree(searchNodes));
     if (this.rightChildren)
-    childrenTrees.push(this.rightChildren.getTree(searchNodes));
-    
+      childrenTrees.push(this.rightChildren.getTree(searchNodes));
+
     if (childrenTrees.length >= 1)
-    return childrenTrees;
+      return childrenTrees;
   }
 
 };
