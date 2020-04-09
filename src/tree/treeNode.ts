@@ -28,36 +28,36 @@ class TreeNode {
     return this.treeHeight;
   }
 
-  public addNode(value: number) {
+  public insert(value: number) {
     if (value === this.value) {
-      throw "This value is already in the Tree";
+      throw new Error("This value is already in the Tree");
     }
 
     if (value < this.value) {
-      this.addToTheLeft(value);
+      this.insertToTheLeft(value);
     } else {
-      this.addToTheRight(value);
+      this.insertToTheRight(value);
     }
 
     this.updateTreeHeight();
     this.updateBalanceFactor();
   }
 
-  private addToTheLeft(value: number) {
+  private insertToTheLeft(value: number) {
     if (this.leftChildren === null) {
       this.leftChildren = new TreeNode(value);
     }
     else {
-      this.leftChildren.addNode(value);
+      this.leftChildren.insert(value);
     }
   }
     
-  private addToTheRight(value: number) {
+  private insertToTheRight(value: number) {
     if (this.rightChildren === null) {
       this.rightChildren = new TreeNode(value);
     }
     else {
-      this.rightChildren.addNode(value);
+      this.rightChildren.insert(value);
     }
   }
 
@@ -86,7 +86,7 @@ class TreeNode {
     return 0;
   }
 
-  public searchNode(requiredValue: number, searchedNodes: number[]): SearchNodeReturn {
+  public find(requiredValue: number, searchedNodes: number[]): SearchNodeReturn {
     searchedNodes.push(this.value);
 
     if (this.value === requiredValue){
@@ -97,9 +97,9 @@ class TreeNode {
     }
 
     if ((requiredValue < this.value) && this.leftChildren) {
-      return this.leftChildren.searchNode(requiredValue, searchedNodes);
+      return this.leftChildren.find(requiredValue, searchedNodes);
     } else if ((requiredValue > this.value) && this.rightChildren) {
-      return this.rightChildren.searchNode(requiredValue, searchedNodes);
+      return this.rightChildren.find(requiredValue, searchedNodes);
     }
 
     return <SearchNodeReturn>{
