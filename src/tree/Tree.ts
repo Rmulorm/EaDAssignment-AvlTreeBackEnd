@@ -1,6 +1,6 @@
-import TreeNode from "./TreeNode";
+import TreeNode from "./TreeNode"
 import ReactD3TreeItem from "../types/ReactD3TreeItem";
-import SearchNodeReturn from "../types/searchNodeReturn";
+import SearchNodeReturn from "../types/SearchNodeReturn";
 
 class Tree {
   private root: TreeNode | null;

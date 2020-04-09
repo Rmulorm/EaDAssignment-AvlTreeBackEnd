@@ -36,7 +36,7 @@ class TreeNode {
     if (value < this.value) {
       this.addToTheLeft(value);
     } else {
-      this.toToTheRight(value);
+      this.addToTheRight(value);
     }
 
     this.updateTreeHeight();
@@ -52,7 +52,7 @@ class TreeNode {
     }
   }
     
-  private toToTheRight(value: number) {
+  private addToTheRight(value: number) {
     if (this.rightChildren === null) {
       this.rightChildren = new TreeNode(value);
     }
