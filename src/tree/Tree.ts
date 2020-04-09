@@ -13,7 +13,7 @@ class Tree {
     if (!this.root) {
       this.root = new TreeNode(value);
     } else {
-      this.root.addNode(value);
+      this.root.insert(value);
     }
   }
 
@@ -24,7 +24,7 @@ class Tree {
         return;
       }
   
-      const searchTree = this.root.searchNode(value, new Array<number>());
+      const searchTree = this.root.find(value, new Array<number>());
       resolve(searchTree);
     }))
     
