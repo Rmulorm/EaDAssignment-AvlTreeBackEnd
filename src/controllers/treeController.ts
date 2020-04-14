@@ -47,6 +47,14 @@ export default {
   },
 
   delete(request: Request, response: Response) {
+    const requiredValue = Number(request.params.number);
 
+    tree.delete(requiredValue)
+    .then(() => {
+      response.status(200).send();
+    })
+    .catch(() => {
+      response.status(404).send();
+    })
   },
 };

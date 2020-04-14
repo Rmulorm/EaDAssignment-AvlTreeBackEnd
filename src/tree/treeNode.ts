@@ -60,8 +60,7 @@ class TreeNode {
     this.updateTreeHeight();
     this.updateBalanceFactor();
 
-    const balancedTree = this.balanceTree();
-    return balancedTree;
+    return this.balanceTree();
   }
 
   private insertToTheLeft(value: number): TreeNode {
@@ -78,7 +77,35 @@ class TreeNode {
       return this.rightChildren.insert(value);
   }
 
-  public balanceTree(): TreeNode {
+  public insertNode(node: TreeNode): TreeNode {
+
+    if (node.getValue() < this.value) {
+      this.leftChildren = this.insertNodeToTheLeft(node);
+    } else {
+      this.rightChildren = this.insertNodeToTheRight(node);
+    }
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+
+    return this.balanceTree();
+  }
+
+  private insertNodeToTheLeft(node: TreeNode): TreeNode {
+    if (this.leftChildren === null)
+      return node;
+    else
+      return this.leftChildren.insertNode(node);
+  }
+
+  private insertNodeToTheRight(node: TreeNode): TreeNode {
+    if (this.rightChildren === null)
+      return node;
+    else
+      return this.rightChildren.insertNode(node);
+  }
+
+  private balanceTree(): TreeNode {
     if (this.balanceFactor > 1)
       return this.rotateToTheRight()
     else if (this.balanceFactor < -1)
@@ -140,6 +167,30 @@ class TreeNode {
       return children.getTreeHeight();
 
     return 0;
+  }
+
+  public remove(value: number): TreeNode | null {
+    if (value < this.value && this.leftChildren) {
+      this.setLeftChildren(this.leftChildren.remove(value));
+      return this.balanceTree();
+    } else if (value > this.value && this.rightChildren) {
+      this.setRightChildren(this.rightChildren.remove(value));
+      return this.balanceTree();
+    } else if (value === this.value)
+      return this.removeMyself();
+
+    throw new Error('Value is not in the Tree');
+  }
+
+  private removeMyself(): TreeNode | null {
+    if (this.leftChildren && this.rightChildren)
+      return this.leftChildren.insertNode(this.rightChildren)
+    else if (this.leftChildren)
+      return this.leftChildren;
+    else if (this.rightChildren)
+      return this.rightChildren;
+    else
+      return null;
   }
 
   public find(requiredValue: number, searchedNodes: number[]): SearchNodeReturn {
