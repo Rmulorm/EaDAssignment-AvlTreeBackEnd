@@ -28,37 +28,124 @@ class TreeNode {
     return this.treeHeight;
   }
 
-  public insert(value: number) {
-    if (value === this.value) {
-      throw new Error("This value is already in the Tree");
-    }
+  public getBalanceFactor(): number {
+    return this.balanceFactor;
+  }
 
-    if (value < this.value) {
-      this.insertToTheLeft(value);
-    } else {
-      this.insertToTheRight(value);
-    }
+  public setRightChildren(node: TreeNode | null) {
+    this.rightChildren = node;
 
     this.updateTreeHeight();
     this.updateBalanceFactor();
   }
 
-  private insertToTheLeft(value: number) {
-    if (this.leftChildren === null) {
-      this.leftChildren = new TreeNode(value);
-    }
-    else {
-      this.leftChildren.insert(value);
-    }
+  public setLeftChildren(node: TreeNode | null) {
+    this.leftChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
   }
-    
-  private insertToTheRight(value: number) {
-    if (this.rightChildren === null) {
-      this.rightChildren = new TreeNode(value);
+
+  public insert(value: number): TreeNode {
+    if (value === this.value) {
+      throw new Error("This value is already in the Tree");
     }
-    else {
-      this.rightChildren.insert(value);
+
+    if (value < this.value) {
+      this.leftChildren = this.insertToTheLeft(value);
+    } else {
+      this.rightChildren = this.insertToTheRight(value);
     }
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+
+    return this.balanceTree();
+  }
+
+  private insertToTheLeft(value: number): TreeNode {
+    if (this.leftChildren === null)
+      return new TreeNode(value);
+    else
+      return this.leftChildren.insert(value);
+  }
+
+  private insertToTheRight(value: number): TreeNode {
+    if (this.rightChildren === null)
+      return new TreeNode(value);
+    else
+      return this.rightChildren.insert(value);
+  }
+
+  public insertNode(node: TreeNode): TreeNode {
+
+    if (node.getValue() < this.value) {
+      this.leftChildren = this.insertNodeToTheLeft(node);
+    } else {
+      this.rightChildren = this.insertNodeToTheRight(node);
+    }
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+
+    return this.balanceTree();
+  }
+
+  private insertNodeToTheLeft(node: TreeNode): TreeNode {
+    if (this.leftChildren === null)
+      return node;
+    else
+      return this.leftChildren.insertNode(node);
+  }
+
+  private insertNodeToTheRight(node: TreeNode): TreeNode {
+    if (this.rightChildren === null)
+      return node;
+    else
+      return this.rightChildren.insertNode(node);
+  }
+
+  private balanceTree(): TreeNode {
+    if (this.balanceFactor > 1)
+      return this.rotateToTheRight()
+    else if (this.balanceFactor < -1)
+      return this.rotateToTheLeft()
+
+    return this;
+  }
+
+  public rotateToTheRight(): TreeNode {
+    if (!this.leftChildren)
+      throw new Error("Invalid rotation to the Right: There's no left children");
+
+    if (this.leftChildren.getBalanceFactor() < 0)
+      this.leftChildren = this.leftChildren.rotateToTheLeft();
+
+    return this.leftChildren.updateRightChildren(this);
+  }
+
+  public updateRightChildren(node: TreeNode | null): TreeNode {
+    node?.setLeftChildren(this.rightChildren);
+    this.setRightChildren(node);
+
+    return this;
+  }
+
+  private rotateToTheLeft(): TreeNode {
+    if (!this.rightChildren)
+      throw new Error("Invalid rotation to the Right: There's no left children");
+
+    if (this.rightChildren.getBalanceFactor() > 0)
+      this.rightChildren = this.rightChildren.rotateToTheRight();
+
+    return this.rightChildren.updateLeftChildren(this);
+  }
+
+  public updateLeftChildren(node: TreeNode | null): TreeNode {
+    node?.setRightChildren(this.leftChildren);
+    this.setLeftChildren(node);
+
+    return this;
   }
 
   private updateTreeHeight() {
@@ -80,6 +167,30 @@ class TreeNode {
       return children.getTreeHeight();
 
     return 0;
+  }
+
+  public remove(value: number): TreeNode | null {
+    if (value < this.value && this.leftChildren) {
+      this.setLeftChildren(this.leftChildren.remove(value));
+      return this.balanceTree();
+    } else if (value > this.value && this.rightChildren) {
+      this.setRightChildren(this.rightChildren.remove(value));
+      return this.balanceTree();
+    } else if (value === this.value)
+      return this.removeMyself();
+
+    throw new Error('Value is not in the Tree');
+  }
+
+  private removeMyself(): TreeNode | null {
+    if (this.leftChildren && this.rightChildren)
+      return this.leftChildren.insertNode(this.rightChildren)
+    else if (this.leftChildren)
+      return this.leftChildren;
+    else if (this.rightChildren)
+      return this.rightChildren;
+    else
+      return null;
   }
 
   public find(requiredValue: number, searchedNodes: number[]): SearchNodeReturn {

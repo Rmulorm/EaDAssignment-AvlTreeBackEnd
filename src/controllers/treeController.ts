@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import Tree from '../tree/Tree';
 import ReactD3TreeItem from '../types/ReactD3TreeItem';
-import SearchNodeReturn from '../types/searchNodeReturn';
+import SearchNodeReturn from '../types/SearchNodeReturn';
 
 const tree = new Tree();
 
@@ -47,6 +47,14 @@ export default {
   },
 
   delete(request: Request, response: Response) {
+    const requiredValue = Number(request.params.number);
 
+    tree.delete(requiredValue)
+    .then(() => {
+      response.status(200).send();
+    })
+    .catch(() => {
+      response.status(404).send();
+    })
   },
 };
